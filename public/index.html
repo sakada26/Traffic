@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trafical - Real-Time Traffic Counter & Alerts</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+    <div class="glow-container">
+        <div class="glow-sphere glow-sphere-1"></div>
+        <div class="glow-sphere glow-sphere-2"></div>
+    </div>
+
+    <!-- Login Screen Overlay -->
+    <div id="login-screen" class="login-screen hidden">
+        <div class="login-card">
+            <div class="login-brand">
+                <div class="logo-icon">
+                    <i data-lucide="activity"></i>
+                </div>
+                <h2>Trafical</h2>
+            </div>
+            <h3 id="auth-title">System Authorization</h3>
+            <p id="auth-subtitle" class="login-subtitle">Please sign in to access the real-time telemetry dashboard & AI configurations.</p>
+            
+            <div id="auth-alert" class="login-error hidden">
+                <i data-lucide="alert-circle" id="auth-alert-icon"></i>
+                <span id="auth-alert-text">Invalid username or password.</span>
+            </div>
+            
+            <!-- Sign In Form -->
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="login-username">Username</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="user" class="input-icon"></i>
+                        <input type="text" id="login-username" placeholder="Enter username" required autocomplete="username">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="lock" class="input-icon"></i>
+                        <input type="password" id="login-password" placeholder="Enter password" required autocomplete="current-password">
+                    </div>
+                </div>
+                
+                <div class="form-options">
+                    <a href="#" id="link-forgot" class="login-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login">
+                    <span>Sign In</span>
+                </button>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form id="signup-form" class="hidden">
+                <div class="input-group">
+                    <label for="signup-username">Username</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="user" class="input-icon"></i>
+                        <input type="text" id="signup-username" placeholder="Choose a username" autocomplete="username">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="signup-password">Password</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="lock" class="input-icon"></i>
+                        <input type="password" id="signup-password" placeholder="Create password" autocomplete="new-password">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="signup-confirm-password">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="lock" class="input-icon"></i>
+                        <input type="password" id="signup-confirm-password" placeholder="Confirm password" autocomplete="new-password">
+                    </div>
+                </div>
+
+                <div class="security-hint-box">
+                    <i data-lucide="shield-alert" class="hint-icon"></i>
+                    <span>For recovery, the system override key is: <code class="recovery-code">TRAFICAL_RECOVERY_2026</code></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login">
+                    <span>Register Account</span>
+                </button>
+            </form>
+
+            <!-- Reset Password / Forgot Password Form -->
+            <form id="forgot-form" class="hidden">
+                <div class="input-group">
+                    <label for="forgot-username">Username</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="user" class="input-icon"></i>
+                        <input type="text" id="forgot-username" placeholder="Enter your username" autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="forgot-security-key">Security Recovery Key</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="key" class="input-icon"></i>
+                        <input type="text" id="forgot-security-key" placeholder="Enter Recovery Key">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="forgot-new-password">New Password</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="lock" class="input-icon"></i>
+                        <input type="password" id="forgot-new-password" placeholder="Enter new password" autocomplete="new-password">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login">
+                    <span>Update Password</span>
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <div id="footer-text-login">
+                    <span>Don't have an account? <a href="#" id="link-signup" class="login-link">Sign Up</a></span>
+                    <br><br>
+                    <span>Default credentials: <span class="credentials-badge">admin</span> / <span class="credentials-badge">admin</span></span>
+                </div>
+                <div id="footer-text-signup" class="hidden">
+                    <span>Already have an account? <a href="#" id="link-login-from-signup" class="login-link">Sign In</a></span>
+                </div>
+                <div id="footer-text-forgot" class="hidden">
+                    <span>Back to <a href="#" id="link-login-from-forgot" class="login-link">Sign In</a></span>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Alert Overlay (activated when road density is Heavy) -->
+    <div id="alert-banner" class="alert-banner hidden">
+        <div class="alert-content">
+            <i data-lucide="alert-triangle" class="alert-icon pulse"></i>
+            <span class="alert-text">HIGH DENSITY WARNING: Traffic congestion detected on road!</span>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">
+                    <i data-lucide="activity"></i>
+                </div>
+                <h1>Trafical</h1>
+            </div>
+            
+            <nav class="menu">
+                <a href="#" class="menu-item active" id="btn-dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="menu-item" id="btn-simulator">
+                    <i data-lucide="gamepad-2"></i>
+                    <span>Traffic Simulator</span>
+                </a>
+                <a href="#" class="menu-item" id="btn-settings">
+                    <i data-lucide="sliders"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="connection-status connected" id="server-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Connected to Server</span>
+                </div>
+                <a href="/logout" class="btn-logout mt-3" style="text-decoration: none;" id="btn-logout">
+                    <i data-lucide="log-out"></i>
+                    <span>Log Out</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Area -->
+        <main class="main-content" id="panel-dashboard">
+            <!-- Top stats widgets -->
+            <section class="stats-grid">
+                <!-- Total Cars Card -->
+                <div class="stat-card card-cars">
+                    <div class="card-icon">
+                        <i data-lucide="car"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Total Cars</h3>
+                        <div class="stat-value" id="val-cars">0</div>
+                    </div>
+                    <span class="indicator-bar bar-cars"></span>
+                </div>
+
+                <!-- Total Motorcycles Card -->
+                <div class="stat-card card-motos">
+                    <div class="card-icon">
+                        <i data-lucide="bike"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Total Motorcycles</h3>
+                        <div class="stat-value" id="val-motos">0</div>
+                    </div>
+                    <span class="indicator-bar bar-motos"></span>
+                </div>
+
+
+
+                <!-- Traffic Flow Rate (VPM) Card -->
+                <div class="stat-card card-flow" id="card-flow-rate">
+                    <div class="card-icon">
+                        <i data-lucide="gauge"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Current Flow Rate</h3>
+                        <div class="stat-value"><span id="val-flow">0</span> <span class="unit">VPM</span></div>
+                        <p class="stat-desc">Vehicles per minute</p>
+                    </div>
+                    <span class="indicator-bar bar-flow"></span>
+                </div>
+
+                <!-- Traffic Density Card -->
+                <div class="stat-card card-density" id="card-density-status">
+                    <div class="card-icon">
+                        <i data-lucide="traffic-cone"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Road Density</h3>
+                        <div class="stat-value" id="val-density">Light</div>
+                        <p class="stat-desc"><span id="val-active-count">0</span> vehicles active</p>
+                    </div>
+                    <span class="indicator-bar bar-density"></span>
+                </div>
+            </section>
+
+            <!-- Video Feed / Simulator View and Settings/Simulation Trigger Panel -->
+            <section class="dashboard-middle-grid">
+                <!-- Camera Feed Panel -->
+                <div class="card feed-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i data-lucide="video" class="icon-pulse"></i> Live Camera Feed
+                        </h2>
+                        <div class="badge badge-success" id="camera-status">Online</div>
+                    </div>
+                    <div class="feed-viewport">
+                        <!-- Simulated video stream element -->
+                        <img id="camera-stream" src="/video_feed" alt="Live Camera Feed" onerror="handleStreamError()">
+                        <div id="camera-fallback" class="feed-fallback hidden">
+                            <i data-lucide="video-off" class="fallback-icon"></i>
+                            <h3>Camera Stream Unavailable</h3>
+                            <p>Could not load the stream from <span id="fallback-url">/video_feed</span></p>
+                            <button class="btn btn-secondary mt-3" onclick="retryStream()">Retry Stream</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Control & AI Analytics Panel -->
+                <div class="card webhook-card" id="ai-controller-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i data-lucide="cpu"></i> AI Stream Controller</h2>
+                        <div class="badge badge-success" id="stream-status-badge">Edge AI Active</div>
+                    </div>
+                    <div class="card-body">
+                        <p class="description">Tune the Edge AI model parameters and toggle display layers in real-time.</p>
+                        
+                        <!-- AI Config Controls -->
+                        <div class="ai-controls-grid">
+                            <div class="ai-control-row">
+                                <label for="ctrl-conf-threshold">YOLO Confidence: <span id="val-conf-threshold">0.50</span></label>
+                                <input type="range" id="ctrl-conf-threshold" min="0.25" max="0.90" step="0.05" value="0.50">
+                            </div>
+                            
+                            <div class="ai-control-row flex-row">
+                                <span>Draw AI Bounding Boxes</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="ctrl-show-overlay" checked>
+                                    <span class="slider-toggle"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Manual Spawning Section -->
+                        <div class="manual-override-section mt-4">
+                            <h4>Manual AI Override</h4>
+                            <p class="description-small">Manually inject a virtual vehicle detection event into the active telemetry stream.</p>
+                            <div class="webhook-actions">
+                                <button class="btn btn-primary btn-spawn" id="btn-trigger-car">
+                                    <i data-lucide="plus-circle"></i> Inject Car Detection
+                                </button>
+                                <button class="btn btn-secondary btn-spawn" id="btn-trigger-moto">
+                                    <i data-lucide="plus-circle"></i> Inject Moto Detection
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Live Telemetry Stats -->
+                        <div class="telemetry-info mt-4">
+                            <h4>Edge AI Telemetry</h4>
+                            <div class="telemetry-grid">
+                                <div class="telemetry-item">
+                                    <span class="tel-label">AI Engine</span>
+                                    <span class="tel-val">YOLO</span>
+                                </div>
+                                <div class="telemetry-item">
+                                    <span class="tel-label">Latency</span>
+                                    <span class="tel-val text-green">~12ms</span>
+                                </div>
+                                <div class="telemetry-item">
+                                    <span class="tel-label">FPS</span>
+                                    <span class="tel-val text-blue" id="tel-fps">30 FPS</span>
+                                </div>
+                                <div class="telemetry-item">
+                                    <span class="tel-label">DB Engine</span>
+                                    <span class="tel-val">SQLite3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bottom Row: Chart & Event Log -->
+            <section class="dashboard-bottom-grid">
+                <!-- Analytics Chart -->
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i data-lucide="trending-up"></i> Traffic Flow History</h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="traffic-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Events log -->
+                <div class="card log-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i data-lucide="history"></i> Live Event Logs</h2>
+                        <button class="btn-clear" id="btn-clear-logs"><i data-lucide="trash-2"></i></button>
+                    </div>
+                    <div class="log-viewport">
+                        <ul class="log-list" id="log-list">
+                            <!-- Populated dynamically -->
+                            <li class="log-empty">No events recorded yet. Waiting for detections...</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Interactive Simulator Page -->
+        <main class="main-content hidden" id="panel-simulator">
+            <div class="card simulator-card">
+                <div class="card-header">
+                    <h2 class="card-title"><i data-lucide="gamepad-2"></i> Road Traffic Simulator</h2>
+                    <div class="simulator-controls-compact">
+                        <button class="btn btn-primary" id="btn-toggle-sim-run">
+                            <i data-lucide="play" id="sim-run-icon"></i> <span id="sim-run-text">Start Simulator</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="simulator-layout">
+                    <div class="canvas-container">
+                        <canvas id="simulator-canvas"></canvas>
+                        <div class="detection-zone-label hidden" id="detection-zone-label">DETECTION ZONE (Webhooks Fired)</div>
+                        <div id="simulator-overlay" class="simulator-overlay">
+                            <div class="overlay-content">
+                                <div class="play-trigger">
+                                    <i data-lucide="play"></i>
+                                </div>
+                                <h3>Traffic Simulator Offline</h3>
+                                <p>Start the engine to simulate real-time vehicle flow and API telemetry.</p>
+                                <button class="btn btn-primary" id="btn-start-sim-overlay">Start Simulation</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="simulator-settings">
+                        <h3>Simulator Configuration</h3>
+                        <p class="description">Simulate dynamic road traffic on a virtual road. Cars and motorcycles passing the vertical detection line will automatically trigger API webhook requests.</p>
+                        
+                        <div class="setting-group">
+                            <label>Car Spawn Frequency</label>
+                            <input type="range" id="sim-freq-car" min="0" max="100" value="40">
+                            <div class="range-values"><span>Low</span><span>High</span></div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label>Motorcycle Spawn Frequency</label>
+                            <input type="range" id="sim-freq-moto" min="0" max="100" value="60">
+                            <div class="range-values"><span>Low</span><span>High</span></div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label>Average Vehicle Speed</label>
+                            <input type="range" id="sim-speed" min="1" max="10" value="4">
+                            <div class="range-values"><span>Slow</span><span>Fast</span></div>
+                        </div>
+
+                        <div class="sim-stats mt-4">
+                            <h4>Simulator Stats</h4>
+                            <div class="sim-stat-row">
+                                <span>Simulated Cars Dispatched:</span>
+                                <strong id="sim-stat-cars">0</strong>
+                            </div>
+                            <div class="sim-stat-row">
+                                <span>Simulated Motos Dispatched:</span>
+                                <strong id="sim-stat-motos">0</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Configuration Settings Page -->
+        <main class="main-content hidden" id="panel-settings">
+            <div class="card settings-card">
+                <div class="card-header">
+                    <h2 class="card-title"><i data-lucide="settings"></i> System Settings</h2>
+                </div>
+                <div class="card-body">
+                    <form id="settings-form">
+                        <div class="setting-row">
+                            <div class="setting-label-col">
+                                <label for="setting-threshold">Traffic Alert Threshold (VPM)</label>
+                                <p class="description">Generate high traffic warning notifications when the traffic volume exceeds this number of vehicles per minute.</p>
+                            </div>
+                            <div class="setting-input-col">
+                                <input type="number" id="setting-threshold" min="1" max="100" value="10" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-label-col">
+                                <label for="setting-camera-url">IP Camera Stream URL</label>
+                                <p class="description">Enter the stream URL of your IP camera (typically MJPEG or HTTP stream endpoint).</p>
+                            </div>
+                            <div class="setting-input-col">
+                                <input type="url" id="setting-camera-url" value="http://192.168.1.22/stream" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-label-col">
+                                <label for="setting-audio">Sound Warnings</label>
+                                <p class="description">Play a warning chime when the traffic threshold is breached.</p>
+                            </div>
+                            <div class="setting-input-col">
+                                <label class="switch">
+                                    <input type="checkbox" id="setting-audio" checked>
+                                    <span class="slider-toggle"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-label-col">
+                                <label for="setting-theme">Theme Interface Mode</label>
+                                <p class="description">Toggle between dark mode (default) and light mode visual themes.</p>
+                            </div>
+                            <div class="setting-input-col">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <span id="setting-theme-text" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Dark Theme</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="setting-theme">
+                                        <span class="slider-toggle"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-actions" style="display: flex; gap: 1rem;">
+                            <button type="submit" class="btn btn-primary" id="btn-save-settings">
+                                <i data-lucide="check"></i> Save Configurations
+                            </button>
+                            <button type="button" class="btn btn-danger" id="btn-clear-data">
+                                <i data-lucide="trash-2"></i> Clear All Data
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Audio elements for alert warning -->
+    <audio id="alert-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav" preload="auto"></audio>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom Scripts -->
+    <script src="app.js"></script>
+    <script src="simulator.js"></script>
+</body>
+</html>
