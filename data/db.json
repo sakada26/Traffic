@@ -1,9 +1,9 @@
 {
-  "total_cars": 24,
-  "total_motos": 22,
+  "total_cars": 28,
+  "total_motos": 27,
   "config": {
     "alert_threshold": 10,
-    "camera_url": "http://192.168.1.22/stream",
+    "camera_url": "http://192.168.1.23/stream",
     "conf_threshold": 0.4,
     "show_overlay": true
   },

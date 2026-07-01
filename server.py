@@ -37,7 +37,7 @@ state = {
     "total_motos": 0,
     "config": {
         "alert_threshold": 5,  # vehicles on road
-        "camera_url": "http://192.168.1.22/stream",
+        "camera_url": "http://192.168.1.23/stream",
         "conf_threshold": 0.5,
         "show_overlay": True
     }
@@ -76,7 +76,7 @@ def load_db():
                 })
                 state["config"] = data.get("config", {
                     "alert_threshold": 5,
-                    "camera_url": "http://192.168.1.22/stream",
+                    "camera_url": "http://192.168.1.23/stream",
                     "conf_threshold": 0.5,
                     "show_overlay": True
                 })

@@ -2,7 +2,7 @@ let trafficChart = null;
 let eventSource = null;
 let currentConfig = {
     alert_threshold: 10,
-    camera_url: "http://192.168.1.22/stream"
+    camera_url: "http://192.168.1.23/stream"
 };
 
 // UI Elements
